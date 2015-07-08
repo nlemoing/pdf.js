@@ -69,6 +69,7 @@ function initializePDFJS(callback) {
     'pdfjs-test/unit/network_spec',
     'pdfjs-test/unit/network_utils_spec',
     'pdfjs-test/unit/parser_spec',
+    'pdfjs-test/unit/pdf_data_writer_spec.js',
     'pdfjs-test/unit/pdf_find_controller_spec',
     'pdfjs-test/unit/pdf_find_utils_spec',
     'pdfjs-test/unit/pdf_history_spec',
