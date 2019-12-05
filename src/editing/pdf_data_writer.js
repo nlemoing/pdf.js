@@ -18,12 +18,15 @@
 'use strict';
 
 import {
-  assert, isArrayBuffer, isBool, isInt, isNum, isString, stringToBytes,
+  assert, isArrayBuffer, isBool, isNum, isString, stringToBytes,
   unreachable
 } from '../shared/util';
 import {
-  Dict, isArray, isDict, isName, isRef, Name, Ref
+  Dict, isDict, isName, isRef, Name, Ref
 } from '../core/primitives';
+
+const isInt = Number.isInteger;
+const isArray = Array.isArray;
 
 /**
  * The PDFDataWriter enables one to serialize PDF.js objects to raw PDF data.
@@ -382,11 +385,11 @@ var PDFDataWriter = (function PDFDataWriterClosure() {
      */
     appendDict: function PDFDataWriter_appendDict(v) {
       this.appendUint8Array(PDF_DICT_START);
-      var map = v.map;
-      for (var k in map) {
+      var keys = v.getKeys();
+      for (var k of keys) {
         this.appendName(k);
         this.appendUint8Array(PDF_DICT_SEPARATOR);
-        this.append(map[k]);
+        this.append(v.getRaw(k));
       }
       this.appendUint8Array(PDF_DICT_END);
       return this;

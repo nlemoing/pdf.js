@@ -751,6 +751,13 @@ class PDFDocumentProxy {
   }
 
   /**
+   * @param {Object} annotation: Object with annotation properties 
+   */
+  getDataForAnnotation(annotation) {
+    return this._transport.getDataForAnnotation(annotation);
+  }
+
+  /**
    * @returns {Promise} A promise that is resolved when the document's data
    *   is loaded. It is resolved with an {Object} that contains the `length`
    *   property that indicates size of the PDF data in bytes.
@@ -2300,6 +2307,10 @@ class WorkerTransport {
 
   getData() {
     return this.messageHandler.sendWithPromise('GetData', null);
+  }
+
+  getDataForAnnotation(annotation) {
+    return this.messageHandler.sendWithPromise('GetDataForAnnotation', annotation);
   }
 
   getPage(pageNumber) {
