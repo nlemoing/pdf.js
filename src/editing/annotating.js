@@ -12,7 +12,11 @@ function annotateDocument(pdfManager, { page, coords, contents, }) {
         const trailer = pdfDocument.xref.trailer;
         const startXRef = pdfDocument.startXRef;
 
-        const newAnnotationRef = new Ref(trailer.get('Size'), 0);
+        // Create reference for new annotation object and update the size
+        const size = trailer.get('Size');
+        const newAnnotationRef = new Ref(size, 0);
+        trailer.set('Size', size + 1);
+
         // Add annotation properties
         const newAnnotationDict = new Dict();
         newAnnotationDict.set('Type', new Name('Annot'));
