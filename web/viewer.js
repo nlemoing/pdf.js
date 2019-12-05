@@ -78,6 +78,7 @@ function getViewerConfiguration() {
       presentationModeButton: document.getElementById('presentationMode'),
       download: document.getElementById('download'),
       viewBookmark: document.getElementById('viewBookmark'),
+      annotate: document.getElementById('editAnnotation'),
     },
     secondaryToolbar: {
       toolbar: document.getElementById('secondaryToolbar'),
@@ -139,6 +140,9 @@ function getViewerConfiguration() {
       findResultsCount: document.getElementById('findResultsCount'),
       findPreviousButton: document.getElementById('findPrevious'),
       findNextButton: document.getElementById('findNext'),
+    },
+    annotations: {
+      annotationButton: document.getElementById('editAnnotation'),
     },
     passwordOverlay: {
       overlayName: 'passwordOverlay',

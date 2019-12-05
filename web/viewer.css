@@ -1909,3 +1909,11 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
     display: none;
   }
 }
+
+.addAnnotation {
+  position: absolute;
+  width: 100px;
+}
+.addAnnotation > textarea {
+  width: 100%;
+}

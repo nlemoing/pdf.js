@@ -32,6 +32,7 @@ import { PDFRenderingQueue, RenderingStates } from './pdf_rendering_queue';
 import { PDFSidebar, SidebarView } from './pdf_sidebar';
 import { OverlayManager } from './overlay_manager';
 import { PasswordPrompt } from './password_prompt';
+import { PDFAnnotationEditor } from './pdf_annotation_editor';
 import { PDFAttachmentViewer } from './pdf_attachment_viewer';
 import { PDFDocumentProperties } from './pdf_document_properties';
 import { PDFFindBar } from './pdf_find_bar';
@@ -401,6 +402,20 @@ let PDFViewerApplication = {
 
     this.pdfSidebarResizer = new PDFSidebarResizer(appConfig.sidebarResizer,
                                                    eventBus, this.l10n);
+
+    this.pdfAnnotationEditor = new PDFAnnotationEditor(appConfig.annotations,
+                                                       eventBus);
+    
+    this.eventBus.on('createannotation', (contents, page, coords) => {
+      if (!this.pdfDocument) {
+        return;
+      }
+      console.log(contents, page, coords);
+      this.pdfDocument.getDataForAnnotation({ page, contents, coords, })
+        .then(data => {
+          this.open(data);
+        });
+    });
   },
 
   run(config) {
