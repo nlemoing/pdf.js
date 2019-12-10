@@ -1,9 +1,8 @@
-import { PDFDataWriter } from "./pdf_data_writer";
-import { Dict, Ref, Name } from "../core/primitives";
-
+import { Dict, Name, Ref } from '../core/primitives';
+import { PDFDataWriter } from './pdf_data_writer';
 
 function annotateDocument(pdfManager, { page, coords, contents, }) {
-    
+
     pdfManager.requestLoadedStream();
     return pdfManager.onLoadedStream().then(function(stream) {
         const pdfData = stream.bytes;
@@ -62,5 +61,5 @@ function annotateDocument(pdfManager, { page, coords, contents, }) {
 }
 
 export {
-    annotateDocument
+    annotateDocument,
 };

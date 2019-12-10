@@ -426,7 +426,7 @@ class BaseViewer {
         return;
       }
       pdfDocument.getPage(pageNum, /* forceReload = */ true).then((pdfPage) => {
-        pageView.setPdfPage(pdfPage)
+        pageView.setPdfPage(pdfPage);
         this.linkService.cachePageRef(pageNum, pdfPage.ref);
         this.update();
       });

@@ -204,14 +204,16 @@ class UpdatePdfManager extends BasePdfManager {
 
     this.pdfDocument = oldPdfManager.pdfDocument;
     oldPdfManager.requestLoadedStream();
-    this._loadedStreamPromise = oldPdfManager.onLoadedStream().then((oldStream) => {
-      const data = new Uint8Array(oldStream.bytes.byteLength + updatedData.byteLength);
-      data.set(oldStream.bytes);
-      data.set(updatedData, oldStream.bytes.length);
-      const stream = new Stream(data);
-      this.pdfDocument.update(this, stream);
-      return stream;
-    });
+    this._loadedStreamPromise = oldPdfManager.onLoadedStream()
+      .then((oldStream) => {
+        const data = new Uint8Array(oldStream.bytes.byteLength +
+                                    updatedData.byteLength);
+        data.set(oldStream.bytes);
+        data.set(updatedData, oldStream.bytes.length);
+        const stream = new Stream(data);
+        this.pdfDocument.update(this, stream);
+        return stream;
+      });
   }
 
   async ensure(obj, prop, args) {

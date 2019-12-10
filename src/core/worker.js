@@ -20,14 +20,14 @@ import {
   UnknownErrorException, UNSUPPORTED_FEATURES, VerbosityLevel, warn
 } from '../shared/util';
 import { clearPrimitiveCaches, Ref } from './primitives';
-import { 
+import {
   LocalPdfManager, NetworkPdfManager, UpdatePdfManager
 } from './pdf_manager';
+import { annotateDocument } from '../editing/annotating';
 import { isNodeJS } from '../shared/is_node';
 import { MessageHandler } from '../shared/message_handler';
 import { PDFWorkerStream } from './worker_stream';
 import { XRefParseException } from './core_utils';
-import { annotateDocument } from '../editing/annotating';
 
 var WorkerTask = (function WorkerTaskClosure() {
   function WorkerTask(name) {

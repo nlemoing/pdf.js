@@ -405,7 +405,7 @@ let PDFViewerApplication = {
 
     this.pdfAnnotationEditor = new PDFAnnotationEditor(appConfig.annotations,
                                                        eventBus);
-    
+
     this.eventBus.on('createannotation', (contents, page, coords) => {
       if (!this.pdfDocument) {
         return;

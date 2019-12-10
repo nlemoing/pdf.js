@@ -105,8 +105,8 @@ class PDFPageView {
     div.style.width = Math.floor(this.viewport.width) + 'px';
     div.style.height = Math.floor(this.viewport.height) + 'px';
     div.setAttribute('data-page-number', this.id);
-    div.addEventListener('click', ({ x, y, clientX, clientY }) => {
-      const { left, top, width, height } = div.getBoundingClientRect();
+    div.addEventListener('click', ({ x, y, clientX, clientY, }) => {
+      const { left, top, width, height, } = div.getBoundingClientRect();
       const offsetX = (clientX - left) / width;
       const offsetY = 1 - ((clientY - top) / height);
       this.eventBus.dispatch('pageclick',

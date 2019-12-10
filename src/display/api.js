@@ -608,7 +608,7 @@ class PDFDocumentProxy {
 
   /**
    * @param {number} pageNumber - The page number to get. The first page is 1.
-   * @param {bool} forceReload - If true, skip the page cache and fetch the page.
+   * @param {bool} forceReload - If true, skip the page cache and fetch the page
    * @returns {Promise} A promise that is resolved with a {@link PDFPageProxy}
    *   object.
    */
@@ -752,7 +752,7 @@ class PDFDocumentProxy {
   }
 
   /**
-   * @param {Object} annotation: Object with annotation properties 
+   * @param {Object} annotation: Object with annotation properties
    */
   createAnnotation(annotation) {
     return this._transport.createAnnotation(annotation);

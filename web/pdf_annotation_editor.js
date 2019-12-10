@@ -15,16 +15,19 @@ class PDFAnnotationEditor {
         });
         eventBus.on('pageclick', this.handlePageClick.bind(this));
     }
+
     on() {
         this.active = true;
         this.toggleButton.classList.add('toggled');
         document.addEventListener('keyup', this.handleKeyPress.bind(this));
     }
+
     off() {
         this.active = false;
         this.toggleButton.classList.remove('toggled');
         document.removeEventListener('keyup', this.handleKeyPress);
     }
+
     toggle() {
         if (this.active) {
             this.off();
@@ -32,6 +35,7 @@ class PDFAnnotationEditor {
             this.on();
         }
     }
+
     handleKeyPress({ keyCode, }) {
         if (keyCode === ENTER_KEY && this.editor) {
             this.escapeEditing(true);
@@ -41,6 +45,7 @@ class PDFAnnotationEditor {
             this.off();
         }
     }
+
     handlePageClick(e) {
         if (!this.active) {
             return;
@@ -51,6 +56,7 @@ class PDFAnnotationEditor {
         }
         this.addEditBox(e);
     }
+
     addEditBox({ x, y, offsetX, offsetY, page, }) {
         if (this.editor) {
             this.editor.remove();
@@ -69,6 +75,7 @@ class PDFAnnotationEditor {
         this.editor.appendChild(this.input);
         this.input.focus();
     }
+
     escapeEditing(submit) {
         if (!this.editor) {
             return;
