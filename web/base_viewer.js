@@ -419,6 +419,20 @@ class BaseViewer {
     };
     this.eventBus.on('pagerendered', this._onAfterDraw);
 
+    this._reloadPage = (evt) => {
+      const pageNum = evt.pageNumber;
+      const pageView = this._pages[pageNum - 1];
+      if (!pageView) {
+        return;
+      }
+      pdfDocument.getPage(pageNum, /* forceReload = */ true).then((pdfPage) => {
+        pageView.setPdfPage(pdfPage)
+        this.linkService.cachePageRef(pageNum, pdfPage.ref);
+        this.update();
+      });
+    };
+    this.eventBus.on('reloadpage', this._reloadPage);
+
     // Fetch a single page so we can get a viewport that will be the default
     // viewport for all pages
     firstPagePromise.then((firstPdfPage) => {
@@ -558,6 +572,10 @@ class BaseViewer {
     if (this._onAfterDraw) {
       this.eventBus.off('pagerendered', this._onAfterDraw);
       this._onAfterDraw = null;
+    }
+    if (this._reloadPage) {
+      this.eventBus.off('reloadpage', this._reloadPage);
+      this._reloadPage = null;
     }
     // Remove the pages from the DOM...
     this.viewer.textContent = '';
