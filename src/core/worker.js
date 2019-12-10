@@ -20,7 +20,9 @@ import {
   UnknownErrorException, UNSUPPORTED_FEATURES, VerbosityLevel, warn
 } from '../shared/util';
 import { clearPrimitiveCaches, Ref } from './primitives';
-import { LocalPdfManager, NetworkPdfManager } from './pdf_manager';
+import { 
+  LocalPdfManager, NetworkPdfManager, UpdatePdfManager
+} from './pdf_manager';
 import { isNodeJS } from '../shared/is_node';
 import { MessageHandler } from '../shared/message_handler';
 import { PDFWorkerStream } from './worker_stream';
@@ -437,9 +439,12 @@ var WorkerMessageHandler = {
       });
     });
 
-    handler.on('GetDataForAnnotation', function editingAnnotaions(annotation) {
-      return annotateDocument(pdfManager, annotation);
-    })
+    handler.on('CreateAnnotation', function wphCreateAnnotation(annotation) {
+      return annotateDocument(pdfManager, annotation).then((data) => {
+        pdfManager = new UpdatePdfManager(pdfManager, data);
+        return loadDocument(false);
+      });
+    });
 
     handler.on('GetStats',
       function wphSetupGetStats(data) {

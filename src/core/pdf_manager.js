@@ -193,7 +193,50 @@ class NetworkPdfManager extends BasePdfManager {
   }
 }
 
+class UpdatePdfManager extends BasePdfManager {
+  constructor(oldPdfManager, updatedData) {
+    super();
+
+    this._docId = oldPdfManager.docId;
+    this._password = oldPdfManager._password;
+    this._docBaseUrl = oldPdfManager._docBaseUrl;
+    this.evaluatorOptions = oldPdfManager.evaluatorOptions;
+
+    this.pdfDocument = oldPdfManager.pdfDocument;
+    oldPdfManager.requestLoadedStream();
+    this._loadedStreamPromise = oldPdfManager.onLoadedStream().then((oldStream) => {
+      const data = new Uint8Array(oldStream.bytes.byteLength + updatedData.byteLength);
+      data.set(oldStream.bytes);
+      data.set(updatedData, oldStream.bytes.length);
+      const stream = new Stream(data);
+      this.pdfDocument.update(this, stream);
+      return stream;
+    });
+  }
+
+  async ensure(obj, prop, args) {
+    const value = obj[prop];
+    if (typeof value === 'function') {
+      return value.apply(obj, args);
+    }
+    return value;
+  }
+
+  requestRange(begin, end) {
+    return Promise.resolve();
+  }
+
+  requestLoadedStream() {}
+
+  onLoadedStream() {
+    return this._loadedStreamPromise;
+  }
+
+  terminate(reason) {}
+}
+
 export {
   LocalPdfManager,
   NetworkPdfManager,
+  UpdatePdfManager,
 };

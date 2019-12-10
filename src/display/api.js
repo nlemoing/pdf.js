@@ -608,11 +608,12 @@ class PDFDocumentProxy {
 
   /**
    * @param {number} pageNumber - The page number to get. The first page is 1.
+   * @param {bool} forceReload - If true, skip the page cache and fetch the page.
    * @returns {Promise} A promise that is resolved with a {@link PDFPageProxy}
    *   object.
    */
-  getPage(pageNumber) {
-    return this._transport.getPage(pageNumber);
+  getPage(pageNumber, forceReload = false) {
+    return this._transport.getPage(pageNumber, forceReload);
   }
 
   /**
@@ -753,8 +754,8 @@ class PDFDocumentProxy {
   /**
    * @param {Object} annotation: Object with annotation properties 
    */
-  getDataForAnnotation(annotation) {
-    return this._transport.getDataForAnnotation(annotation);
+  createAnnotation(annotation) {
+    return this._transport.createAnnotation(annotation);
   }
 
   /**
@@ -2309,18 +2310,25 @@ class WorkerTransport {
     return this.messageHandler.sendWithPromise('GetData', null);
   }
 
-  getDataForAnnotation(annotation) {
-    return this.messageHandler.sendWithPromise('GetDataForAnnotation', annotation);
+  createAnnotation(annotation) {
+    const pageNumber = annotation.page;
+    if (!Number.isInteger(pageNumber) ||
+        pageNumber <= 0 || pageNumber > this._numPages) {
+      return Promise.reject(new Error('Invalid page request'));
+    }
+    const pageIndex = pageNumber - 1;
+    annotation.page = pageIndex;
+    return this.messageHandler.sendWithPromise('CreateAnnotation', annotation);
   }
 
-  getPage(pageNumber) {
+  getPage(pageNumber, forceReload = false) {
     if (!Number.isInteger(pageNumber) ||
         pageNumber <= 0 || pageNumber > this._numPages) {
       return Promise.reject(new Error('Invalid page request'));
     }
 
     const pageIndex = pageNumber - 1;
-    if (pageIndex in this.pagePromises) {
+    if (!forceReload && pageIndex in this.pagePromises) {
       return this.pagePromises[pageIndex];
     }
     const promise = this.messageHandler.sendWithPromise('GetPage', {

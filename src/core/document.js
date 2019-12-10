@@ -378,9 +378,17 @@ class PDFDocument {
       throw new Error('PDFDocument: Stream must have data');
     }
 
+    this.update(pdfManager, stream);
+  }
+
+  update(pdfManager, stream) {
     this.pdfManager = pdfManager;
     this.stream = stream;
-    this.xref = new XRef(stream, pdfManager);
+    if (!this.xref) {
+      this.xref = new XRef(stream, pdfManager);
+    } else {
+      this.xref.update(stream, pdfManager);
+    }
 
     this.pdfFunctionFactory = new PDFFunctionFactory({
       xref: this.xref,
@@ -484,7 +492,7 @@ class PDFDocument {
         }
       }
     }
-    return shadow(this, 'startXRef', startXRef);
+    return startXRef;
   }
 
   // Find the header, get the PDF format version and setup the

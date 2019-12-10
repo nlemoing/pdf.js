@@ -410,10 +410,9 @@ let PDFViewerApplication = {
       if (!this.pdfDocument) {
         return;
       }
-      console.log(contents, page, coords);
-      this.pdfDocument.getDataForAnnotation({ page, contents, coords, })
-        .then(data => {
-          this.open(data);
+      this.pdfDocument.createAnnotation({ page, contents, coords, })
+        .then(() => {
+          this.eventBus.dispatch('reloadpage', { pageNumber: page, });
         });
     });
   },

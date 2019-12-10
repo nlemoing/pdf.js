@@ -46,7 +46,7 @@ function annotateDocument(pdfManager, { page, coords, contents, }) {
             }
             newPageDict.set('Annots', annotations);
 
-            return new PDFDataWriter(pdfData)
+            return new PDFDataWriter(null, pdfData.byteLength)
                 .setTrailer(trailer)
                 .setStartXRef(startXRef)
                 .startObj(newAnnotationRef)

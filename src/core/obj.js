@@ -1047,6 +1047,11 @@ var XRef = (function XRefClosure() {
       streamTypes: Object.create(null),
       fontTypes: Object.create(null),
     };
+    // Keep track of already parsed XRef tables, to prevent an infinite loop
+    // when parsing corrupt PDF files where e.g. the /Prev entries create a
+    // circular dependency between tables (fixes bug1393476.pdf).
+    this._startXRefParsedCache = Object.create(null);
+    this.updating = false;
   }
 
   XRef.prototype = {
@@ -1054,6 +1059,13 @@ var XRef = (function XRefClosure() {
       // Store the starting positions of xref tables as we process them
       // so we can recover from missing data errors
       this.startXRefQueue = [startXRef];
+    },
+
+    update(stream, pdfManager) {
+      this.stream = stream;
+      this.pdfManager = pdfManager;
+      this._cacheMap = new Map(); // Clear the XRef cache
+      this.updating = true;
     },
 
     parse: function XRef_parse(recoveryMode) {
@@ -1222,7 +1234,7 @@ var XRef = (function XRefClosure() {
             first = 0;
           }
 
-          if (!this.entries[i + first]) {
+          if (!this.entries[i + first] || this.updating) {
             this.entries[i + first] = entry;
           }
         }
@@ -1525,21 +1537,17 @@ var XRef = (function XRefClosure() {
 
     readXRef: function XRef_readXRef(recoveryMode) {
       var stream = this.stream;
-      // Keep track of already parsed XRef tables, to prevent an infinite loop
-      // when parsing corrupt PDF files where e.g. the /Prev entries create a
-      // circular dependency between tables (fixes bug1393476.pdf).
-      let startXRefParsedCache = Object.create(null);
 
       try {
         while (this.startXRefQueue.length) {
           var startXRef = this.startXRefQueue[0];
 
-          if (startXRefParsedCache[startXRef]) {
+          if (this._startXRefParsedCache[startXRef]) {
             warn('readXRef - skipping XRef table since it was already parsed.');
             this.startXRefQueue.shift();
             continue;
           }
-          startXRefParsedCache[startXRef] = true;
+          this._startXRefParsedCache[startXRef] = true;
 
           stream.pos = startXRef + stream.start;
 

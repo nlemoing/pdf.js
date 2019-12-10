@@ -110,7 +110,7 @@ class PDFPageView {
       const offsetX = (clientX - left) / width;
       const offsetY = 1 - ((clientY - top) / height);
       this.eventBus.dispatch('pageclick',
-        { x, y, offsetX, offsetY, page: this.id - 1, });
+        { x, y, offsetX, offsetY, page: this.id, });
     });
     this.div = div;
 
