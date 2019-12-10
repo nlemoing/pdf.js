@@ -378,17 +378,21 @@ class PDFDocument {
       throw new Error('PDFDocument: Stream must have data');
     }
 
-    this.update(pdfManager, stream);
+    this.pdfManager = pdfManager;
+    this.stream = stream;
+    this.xref = new XRef(stream, pdfManager);
+
+    this.pdfFunctionFactory = new PDFFunctionFactory({
+      xref: this.xref,
+      isEvalSupported: pdfManager.evaluatorOptions.isEvalSupported,
+    });
+    this._pagePromises = [];
   }
 
   update(pdfManager, stream) {
     this.pdfManager = pdfManager;
     this.stream = stream;
-    if (!this.xref) {
-      this.xref = new XRef(stream, pdfManager);
-    } else {
-      this.xref.update(stream, pdfManager);
-    }
+    this.xref.update(stream, pdfManager);
 
     this.pdfFunctionFactory = new PDFFunctionFactory({
       xref: this.xref,

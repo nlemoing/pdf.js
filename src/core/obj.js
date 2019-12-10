@@ -1047,10 +1047,6 @@ var XRef = (function XRefClosure() {
       streamTypes: Object.create(null),
       fontTypes: Object.create(null),
     };
-    // Keep track of already parsed XRef tables, to prevent an infinite loop
-    // when parsing corrupt PDF files where e.g. the /Prev entries create a
-    // circular dependency between tables (fixes bug1393476.pdf).
-    this._startXRefParsedCache = Object.create(null);
     this.updating = false;
   }
 
@@ -1537,17 +1533,21 @@ var XRef = (function XRefClosure() {
 
     readXRef: function XRef_readXRef(recoveryMode) {
       var stream = this.stream;
+      // Keep track of already parsed XRef tables, to prevent an infinite loop
+      // when parsing corrupt PDF files where e.g. the /Prev entries create a
+      // circular dependency between tables (fixes bug1393476.pdf).
+      let startXRefParsedCache = Object.create(null);
 
       try {
         while (this.startXRefQueue.length) {
           var startXRef = this.startXRefQueue[0];
 
-          if (this._startXRefParsedCache[startXRef]) {
+          if (startXRefParsedCache[startXRef]) {
             warn('readXRef - skipping XRef table since it was already parsed.');
             this.startXRefQueue.shift();
             continue;
           }
-          this._startXRefParsedCache[startXRef] = true;
+          startXRefParsedCache[startXRef] = true;
 
           stream.pos = startXRef + stream.start;
 
@@ -1596,14 +1596,16 @@ var XRef = (function XRefClosure() {
             throw new FormatError('Invalid XRef stream header');
           }
 
-          // Recursively get previous dictionary, if any
-          obj = dict.get('Prev');
-          if (Number.isInteger(obj)) {
-            this.startXRefQueue.push(obj);
-          } else if (isRef(obj)) {
-            // The spec says Prev must not be a reference, i.e. "/Prev NNN"
-            // This is a fallback for non-compliant PDFs, i.e. "/Prev NNN 0 R"
-            this.startXRefQueue.push(obj.num);
+          if (!this.updating) {
+            // Recursively get previous dictionary, if any
+            obj = dict.get('Prev');
+            if (Number.isInteger(obj)) {
+              this.startXRefQueue.push(obj);
+            } else if (isRef(obj)) {
+              // The spec says Prev must not be a reference, i.e. "/Prev NNN"
+              // This is a fallback for non-compliant PDFs, i.e. "/Prev NNN 0 R"
+              this.startXRefQueue.push(obj.num);
+            }
           }
 
           this.startXRefQueue.shift();
