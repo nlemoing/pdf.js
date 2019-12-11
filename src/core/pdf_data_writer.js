@@ -23,7 +23,7 @@ import {
 } from '../shared/util';
 import {
   Dict, isDict, isName, isRef, Name, Ref
-} from '../core/primitives';
+} from './primitives';
 
 const isInt = Number.isInteger;
 const isArray = Array.isArray;

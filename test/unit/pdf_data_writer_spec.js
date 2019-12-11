@@ -5,7 +5,7 @@
 
 import { bytesToString, stringToBytes } from '../../src/shared/util';
 import { Dict, Name, Ref } from '../../src/core/primitives';
-import { PDFDataWriter } from '../../src/editing/pdf_data_writer';
+import { PDFDataWriter } from '../../src/core/pdf_data_writer';
 
 describe('pdf_data_writer', function() {
   beforeEach(function() {

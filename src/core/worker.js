@@ -23,7 +23,6 @@ import { clearPrimitiveCaches, Ref } from './primitives';
 import {
   LocalPdfManager, NetworkPdfManager, UpdatePdfManager
 } from './pdf_manager';
-import { annotateDocument } from '../editing/annotating';
 import { isNodeJS } from '../shared/is_node';
 import { MessageHandler } from '../shared/message_handler';
 import { PDFWorkerStream } from './worker_stream';
@@ -440,7 +439,7 @@ var WorkerMessageHandler = {
     });
 
     handler.on('CreateAnnotation', function wphCreateAnnotation(annotation) {
-      return annotateDocument(pdfManager, annotation).then((data) => {
+      return pdfManager.annotateDocument(annotation).then((data) => {
         pdfManager = new UpdatePdfManager(pdfManager, data);
         return loadDocument(false);
       });
